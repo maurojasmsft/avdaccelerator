@@ -49,6 +49,13 @@ Prior to deploying the Baseline solution, you need to ensure you have met the fo
     - <https://onegetcdn.azureedge.net/providers/providers.masterList.feed.swidtag>
     - <https://www.powershellgallery.com>
 - [x]  If using existing Virtual Networks, disable deny private endpoint network policies. The deployment will fail if deny private endpoint network policies are enabled. See the following article on disabling them: [Disable private endpoint network policy](https://docs.microsoft.com/azure/private-link/disable-private-endpoint-network-policy).
+- [x] This repository offers the option to connect to a Hub Virtual Network within your connectivity subscription, which may include Hybrid Connectivity through diverse methods. Some deployments use VPN and Traffic inspection capabilities using [High Available Network Virtual Appliances](https://learn.microsoft.com/en-us/azure/architecture/networking/guide/nva-ha)(NVAs). When routing traffic through an NVA, it's important to maintain the existing User Defined Routes for the Control Plane that contain the necessary service tags for control plane operations, rather than redirecting all traffic, including Control Plane, through the NVA. This approach helps prevent the NVA from reaching its [flow limits](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-machine-network-throughput#flow-limits-and-active-connections-recommendations) and avoids the saturation of the NVA with excessive UDP VPN traffic. 
+- [x] If the solution is expected to have large volume of UDP traffic:
+  - When using a High Available NVAs for VPN tunnels, consider splitting VPN traffic between 2 or more VPN tunnels endpoints to On Premises.
+  - When using Azure Virtual Network Gateways for VPN tunnels, consider creating two or more connections to On Premises
+  - Consider implementing Express Route Private peering to alleviate UDP encapsulation overhead to On Premises
+  - Consider using Azure Firewall for traffic inspection and scalability
+  - Consider using High Available NVAs for traffic inspection only and not for On Premises connectivity. 
 
 ### Private endpoints DNS requirements and considerations
 
